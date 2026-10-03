@@ -5,8 +5,10 @@ def generate_random(n):
     """Completely random bit sequence of length n."""
 
     return [random.randint(0, 1) for _ in range(n)] #picks either 0 or 1, each with equal chance. Both ends are included. and brackets for list comprehension 
-# Complexity: O(n), because it makes exactly n random picks.
+
 #_ is just a variable name, (THROWAWAY VARIABLE), used because the loop index isn't needed.
+
+# Complexity: O(n), because it makes exactly n random picks.
 
 
 def generate_with_zero_runs(n, run_length=8, num_runs=2):
@@ -27,12 +29,13 @@ def generate_with_zero_runs(n, run_length=8, num_runs=2):
 
     return bits
 
-
+print(generate_with_zero_runs(20, run_length=4, num_runs=2))
+#Complexity is O(n) for generating the random list, plus O(run_length × num_runs) for planting. Overall O(n).
 
 def longest_palindrome(bits):
     """Longest palindromic substring using Manacher's algorithm, O(n).
     Returns (palindrome_string, start_index)."""
-    s = "".join(map(str, bits))
+    s = "".join(map(str, bits)) #map(str, bits) converts each number to a string: [1,0,1] → "1", "0", "1".
     if not s:
         return "", 0
 
@@ -54,8 +57,47 @@ def longest_palindrome(bits):
     return s[start:start + max_len], start
 
 
+
+
+
+# SIMPLE VERSION 
+def expand(s, left, right):
+    while left >= 0 and right < len(s) and s[left] == s[right]:
+        left -= 1 # starting from both left and right from the middle , then checking values at that index if it matches then 
+                   #start expanding outwards like left-1 & right +1 and again check the values and go onn till the while loop fails 
+        right += 1 
+    return left + 1, right - 1
+
+
+def longest_palindrome_simple(bits):
+    s = "".join(map(str, bits))
+    if not s:
+        return "", 0
+
+    best_start, best_end = 0, 0
+
+    for i in range(len(s)):
+        l1, r1 = expand(s, i, i)        # odd-length palindrome centred on i
+        l2, r2 = expand(s, i, i + 1)    # even-length palindrome centred between i and i+1
+
+        if r1 - l1 > best_end - best_start:
+            best_start, best_end = l1, r1
+        if r2 - l2 > best_end - best_start:
+            best_start, best_end = l2, r2
+
+    return s[best_start:best_end + 1], best_start
+
+
+
+
 if __name__ == "__main__":
     bits = generate_with_zero_runs(30, run_length=4, num_runs=2)
     print("Bits:", "".join(map(str, bits)))
     pal, start = longest_palindrome(bits)
     print(f"Longest palindrome: {pal} (length {len(pal)}, starts at index {start})")
+    print("Simple:  ", longest_palindrome_simple(bits))
+
+# for simple version 
+    s = "1011"
+start, end = expand(s, 1, 1)
+print(start, end, s[start:end + 1])

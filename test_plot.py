@@ -1,10 +1,38 @@
 import matplotlib.pyplot as plt
+from encoders import nrz_l_encode, nrz_l_decode
+from encoders import nrz_i_encode, nrz_i_decode
+from encoders import manchester_encode, manchester_decode
 
-bits = [1, 0, 1, 1, 0]
-levels = [1 if b == 1 else -1 for b in bits]
-levels.append(levels[-1])  # so the last bit gets drawn fully
+# To add a new line code later: import it above and add one line here
+SCHEMES = {
+    "NRZ-L": (nrz_l_encode, nrz_l_decode),
+    "NRZ-I": (nrz_i_encode, nrz_i_decode),
+    "Manchester": (manchester_encode, manchester_decode),
+}
 
-plt.step(range(len(levels)), levels, where="post")
-plt.ylim(-2, 2)
-plt.title("NRZ-L: 1 0 1 1 0")
-plt.show()
+while True:
+    print()
+    print("Schemes:", ", ".join(SCHEMES))
+    name = input("Which scheme? (or type q to quit) ").strip()
+    if name.lower() == "q":
+        break
+    if name not in SCHEMES:
+        print("Unknown scheme, try again")
+        continue
+
+    text = input("Enter bits (like 10110): ").strip()
+    bits = [int(c) for c in text]
+
+    encode, decode = SCHEMES[name]
+    signal = encode(bits)
+
+    print("Signal :", signal)
+    print("Decoded:", decode(signal))
+    print("Match  :", decode(signal) == bits)
+
+    levels = signal + [signal[-1]]
+    plt.figure(figsize=(12, 3))
+    plt.step(range(len(levels)), levels, where="post")
+    plt.ylim(-2, 2)
+    plt.title(name + ": " + text)
+    plt.show()

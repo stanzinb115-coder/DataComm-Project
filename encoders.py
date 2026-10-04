@@ -40,3 +40,28 @@ def manchester_decode(signal):
     for i in range(0, len(signal), 2):
         out.append(1 if signal[i] < signal[i + 1] else 0)
     return out
+
+
+def diff_manchester_encode(bits):
+    level = -1
+    out = []
+    for b in bits:
+        if b == 0:
+            level = -level      # 0: change at the start of the bit
+        first = level
+        level = -level          # change in the middle of every bit
+        second = level
+        out += [first, second]
+    return out
+ 
+ 
+def diff_manchester_decode(signal):
+    prev = -1
+    out = []
+    for i in range(0, len(signal), 2):
+        first = signal[i]
+        out.append(1 if first == prev else 0)   # no change at start = 1
+        prev = signal[i + 1]
+    return out
+
+ 

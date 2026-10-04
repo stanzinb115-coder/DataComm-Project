@@ -2,12 +2,14 @@ import matplotlib.pyplot as plt
 from encoders import nrz_l_encode, nrz_l_decode
 from encoders import nrz_i_encode, nrz_i_decode
 from encoders import manchester_encode, manchester_decode
+from encoders import diff_manchester_encode, diff_manchester_decode
 
 # To add a new line code later: import it above and add one line here
 SCHEMES = {
     "NRZ-L": (nrz_l_encode, nrz_l_decode),
     "NRZ-I": (nrz_i_encode, nrz_i_decode),
     "Manchester": (manchester_encode, manchester_decode),
+    "Diff-Manchester": (diff_manchester_encode, diff_manchester_decode),
 }
 
 while True:

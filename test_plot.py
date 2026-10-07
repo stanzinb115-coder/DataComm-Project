@@ -3,6 +3,9 @@ from encoders import nrz_l_encode, nrz_l_decode
 from encoders import nrz_i_encode, nrz_i_decode
 from encoders import manchester_encode, manchester_decode
 from encoders import diff_manchester_encode, diff_manchester_decode
+from encoders import ami_encode, ami_decode
+from encoders import b8zs_encode, b8zs_decode
+from encoders import hdb3_encode, hdb3_decode
 
 # To add a new line code later: import it above and add one line here
 SCHEMES = {
@@ -10,6 +13,9 @@ SCHEMES = {
     "NRZ-I": (nrz_i_encode, nrz_i_decode),
     "Manchester": (manchester_encode, manchester_decode),
     "Diff-Manchester": (diff_manchester_encode, diff_manchester_decode),
+    "AMI": (ami_encode, ami_decode),
+    "B8ZS": (b8zs_encode, b8zs_decode),
+    "HDB3": (hdb3_encode, hdb3_decode),
 }
 
 while True:

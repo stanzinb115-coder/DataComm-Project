@@ -29,19 +29,21 @@ def generate_with_zero_runs(n, run_length=8, num_runs=2):
 
     return bits
 
-print(generate_with_zero_runs(20, run_length=4, num_runs=2))
+#print(generate_with_zero_runs(20, run_length=4, num_runs=2))
 #Complexity is O(n) for generating the random list, plus O(run_length × num_runs) for planting. Overall O(n).
 
 def longest_palindrome(bits):
     """Longest palindromic substring using Manacher's algorithm, O(n).
     Returns (palindrome_string, start_index)."""
     s = "".join(map(str, bits)) #map(str, bits) converts each number to a string: [1,0,1] → "1", "0", "1".
-    if not s:
+    if not s:    # Empty check
         return "", 0
 
     t = "#" + "#".join(s) + "#"      # separators make odd/even palindromes uniform
-    n = len(t)
-    p = [0] * n                      # p[i] = palindrome radius centred at i
+    n = len(t)        # length of the string after the separators have been apllied (eg. : "101" becomes "#1#0#1#" which has length 7)
+    p = [0] * n                      # This makes a list of n zeros, one for each position in t: p = [0, 0, 0, 0, 0, 0, 0]
+
+
     center = right = 0
 
     for i in range(n):
@@ -74,19 +76,19 @@ def longest_palindrome_simple(bits):
     if not s:
         return "", 0
 
-    best_start, best_end = 0, 0
-
+    best_start, best_end = 0, 0 #just the starting values as 0,0 (meaning just a single character at both ends which is always a palindrome )
+                               #Later, whenever we find a longer palindrome, we'll replace these two numbers.
     for i in range(len(s)):
         l1, r1 = expand(s, i, i)        # odd-length palindrome centred on i
         l2, r2 = expand(s, i, i + 1)    # even-length palindrome centred between i and i+1
 
-        if r1 - l1 > best_end - best_start:
-            best_start, best_end = l1, r1
+        if r1 - l1 > best_end - best_start:  #r1 - l1 is the size of the new palindrome (;best_end - best_start is the size of the one on the shelf.
+            best_start, best_end = l1, r1 #  we get bestend and beststart from the expalnd part
         if r2 - l2 > best_end - best_start:
             best_start, best_end = l2, r2
 
-    return s[best_start:best_end + 1], best_start
-
+    return s[best_start:best_end + 1], best_start#s[best_start:best_end + 1] is the palindrome as text. It's the slice we went over earlier, and the + 1 is there because a slice stops one position early.
+                         #best_start is the position where the palindrome starts in the original string.
 
 
 
@@ -98,6 +100,6 @@ if __name__ == "__main__":
     print("Simple:  ", longest_palindrome_simple(bits))
 
 # for simple version 
-    s = "1011"
-start, end = expand(s, 1, 1)
-print(start, end, s[start:end + 1])
+    #s = "1011"
+#start, end = expand(s, 1, 1)
+#print(start, end, s[start:end + 1])cs

@@ -71,6 +71,11 @@ def main():
     print("Signal:", signal)
     plot_signal(signal, name)
 
+    if input("Decode the signal? (y/n) ").strip().lower() == "y":
+        decoded = decode(signal)
+        print("Decoded:", "".join(map(str, decoded)))
+        print("Match  :", decoded == bits)
+
 
 if __name__ == "__main__":
     main()

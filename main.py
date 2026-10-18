@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import math
+from dm import dm_encode, dm_decode
 from generator import generate_random, generate_with_zero_runs, longest_palindrome
 from encoders import (
     nrz_l_encode, nrz_l_decode,
@@ -59,9 +61,37 @@ def plot_signal(signal, title):
     plt.show()
 
 
+def get_analog_bits():
+    amplitude = float(input("Amplitude of the sine wave (for example 3)? "))
+    n = int(input("Number of samples (for example 40)? "))
+    step = float(input("DM step size (for example 0.5)? "))
+
+    samples = [amplitude * math.sin(2 * math.pi * k / n) for k in range(n)]
+    bits = dm_encode(samples, step=step)
+    levels = dm_decode(bits, step=step)
+
+    plt.figure(figsize=(10, 4))
+    plt.plot(samples, label="Analog signal")
+    plt.step(range(len(levels)), levels, where="post", label="DM staircase")
+    plt.legend()
+    plt.title("Delta modulation")
+    plt.show()
+    return bits
+
+
+INPUT_TYPES = {
+    "1": get_digital_data,
+    "2": get_analog_bits,
+}
+
+
+def get_input_bits():
+    choice = input("Digital input (1) or analog input (2)? ").strip()
+    return INPUT_TYPES[choice]()
+
 def main():
-    bits = get_digital_data()
-    print("Digital data:", "".join(map(str, bits)))
+    bits = get_input_bits()
+    print("Input bits:", "".join(map(str, bits)))
 
     pal, start = longest_palindrome(bits)
     print(f"Longest palindrome: {pal} (length {len(pal)}, starts at index {start})")

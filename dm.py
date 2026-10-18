@@ -1,3 +1,6 @@
+import math
+import matplotlib.pyplot as plt
+
 def dm_encode(samples, step=1.0, start=0.0):
     """Delta modulation: 1 bit per sample (1 = step up, 0 = step down)."""
     staircase = start
@@ -26,6 +29,18 @@ def dm_decode(bits, step=1.0, start=0.0):
     return levels
 
 if __name__ == "__main__":
-    bits = dm_encode([2.0, 2.6, 3.4, 3.0], step=1.0)
-    print(bits)                      # [1, 1, 1, 0]
-    print(dm_decode(bits, step=1.0)) # should print [1.0, 2.0, 3.0, 2.0]
+    # analog input: one cycle of a sine wave, 40 samples
+    samples = [3 * math.sin(2 * math.pi * k / 40) for k in range(40)]
+    step = 0.5
+# (with step=0.2 and0.1)This is the main trade-off in DM,: a small step lags on steep parts, a big step is rough on flat parts.
+    bits = dm_encode(samples, step=step)
+    levels = dm_decode(bits, step=step)
+
+    print("DM bits:", "".join(map(str, bits)))
+
+    plt.figure(figsize=(10, 4))
+    plt.plot(samples, label="Analog signal")
+    plt.step(range(len(levels)), levels, where="post", label="DM staircase")
+    plt.legend()
+    plt.title("Delta modulation")
+    plt.show()

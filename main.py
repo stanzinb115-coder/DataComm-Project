@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import math
 from dm import dm_encode, dm_decode
+from pcm import pcm_encode, pcm_decode
 from generator import generate_random, generate_with_zero_runs, longest_palindrome
 from encoders import (
     nrz_l_encode, nrz_l_decode,
@@ -61,7 +62,7 @@ def plot_signal(signal, title):
     plt.show()
 
 
-def get_analog_bits():
+def get_dm_bits():
     amplitude = float(input("Amplitude of the sine wave (for example 3)? "))
     n = int(input("Number of samples (for example 40)? "))
     step = float(input("DM step size (for example 0.5)? "))
@@ -79,6 +80,35 @@ def get_analog_bits():
     return bits
 
 
+def get_pcm_bits():
+    amplitude = float(input("Amplitude of the sine wave (for example 3)? "))
+    n = int(input("Number of samples (for example 40)? "))
+    n_bits = int(input("Bits per sample (for example 3)? "))
+
+    samples = [amplitude * math.sin(2 * math.pi * k / n) for k in range(n)]
+    bits = pcm_encode(samples, n_bits, -amplitude, amplitude)
+    levels = pcm_decode(bits, n_bits, -amplitude, amplitude)
+
+    plt.figure(figsize=(10, 4))
+    plt.plot(samples, label="Analog signal")
+    plt.step(range(len(levels)), levels, where="mid", label="PCM quantized signal")
+    plt.legend()
+    plt.title("Pulse code modulation")
+    plt.show()
+    return bits
+
+
+ANALOG_MODES = {
+    "1": get_pcm_bits,
+    "2": get_dm_bits,
+}
+
+
+def get_analog_bits():
+    choice = input("PCM (1) or DM (2)? ").strip()
+    return ANALOG_MODES[choice]()
+
+
 INPUT_TYPES = {
     "1": get_digital_data,
     "2": get_analog_bits,
@@ -88,6 +118,7 @@ INPUT_TYPES = {
 def get_input_bits():
     choice = input("Digital input (1) or analog input (2)? ").strip()
     return INPUT_TYPES[choice]()
+
 
 def main():
     bits = get_input_bits()
